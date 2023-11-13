@@ -43,7 +43,7 @@ if __name__ == "__main__":
         {"name": "Jan Koum", "birthday": datetime(1976, 1, 1).date()},
         {"name": "Bill Gates", "birthday": datetime(1955, 10, 28).date()},
         {"name": "Mark Zuckerberg", "birthday": datetime(1984, 5, 14).date()},
-        {"name": "Ded", "birthday": datetime(1958, 12, 4).date()}
+        {"name": "Did", "birthday": datetime(1958, 12, 4).date()}
     ]
 
     result = get_birthdays_per_week(users)
