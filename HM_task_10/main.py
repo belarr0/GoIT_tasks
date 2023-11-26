@@ -11,7 +11,14 @@ class Name(Field):
     pass
 
 class Phone(Field):
-    pass
+    def __init__(self, value):
+        if not self.validate_phone(value):
+            raise ValueError("Invalid phone number format")
+        super().__init__(value)
+
+    def validate_phone(self, value):
+        # Ваша логіка валідації номера телефону. Приклад: довжина 10 цифр.
+        return len(value) == 10 and value.isdigit()
 
 class Record:
     def __init__(self, name):
@@ -26,6 +33,12 @@ class Record:
 
     def edit_phone(self, index, new_phone):
         self.phones[index].value = new_phone
+
+    def find_phone(self, phone):
+        for index, existing_phone in enumerate(self.phones):
+            if existing_phone.value == phone:
+                return index
+        return -1
 
     def __str__(self):
         phones_str = ", ".join(str(phone) for phone in self.phones)
@@ -74,16 +87,20 @@ class ContactBot:
 
     @input_error
     def change_contact(self, command):
-        _, name, index, phone = command.split()
+        _, name, old_phone, new_phone = command.split()
         record = self.contacts[name]
-        record.edit_phone(int(index), phone)
-        return f"Phone number for {name} changed to {phone}"
+        index = record.find_phone(old_phone)
+        if index != -1:
+            record.edit_phone(index, new_phone)
+            return f"Phone number for {name} changed from {old_phone} to {new_phone}"
+        else:
+            raise ValueError(f"Phone number {old_phone} not found for {name}")
 
     @input_error
     def phone_number(self, command):
         _, name = command.split()
         record = self.contacts[name]
-        return f"The phone number for {name} is {', '.join(str(phone) for phone in record.phones)}"
+        return f"The phone numbers for {name} are {', '.join(str(phone) for phone in record.phones)}"
 
     @input_error
     def show_all_contacts(self):
