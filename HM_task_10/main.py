@@ -17,7 +17,6 @@ class Phone(Field):
         super().__init__(value)
 
     def validate_phone(self, value):
-        # Ваша логіка валідації номера телефону. Приклад: довжина 10 цифр.
         return len(value) == 10 and value.isdigit()
 
 class Record:
