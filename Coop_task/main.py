@@ -2,10 +2,21 @@ import os
 
 exit_words = ["good bye", "close", "exit", "bye"]
 
+# class Colors:
+#     RESET = '\033[0m'
+#     RED = '\033[91m'
+#     GREEN = '\033[92m'
+#     YELLOW = '\033[93m'
+#     BLUE = '\033[94m'
+#     MAGENTA = '\033[95m'
+#     CYAN = '\033[96m'
+
 class NoteActions:
     @staticmethod
     def add_note(notes, name, title):
+        note_manager = NoteManager()
         notes[name] = title
+        note_manager.save_notes_to_file()
         return f"Note added: {name}, {title}"
 
     @staticmethod
@@ -27,7 +38,7 @@ class NoteActions:
 class NoteManager:
     def __init__(self, exit_words=None):
         self.notes = {}
-        self.exit_words = exit_words or []
+        self.exit_words = exit_words
         current_directory = os.path.dirname(os.path.abspath(__file__))
         self.data_file_path = os.path.join(current_directory, "data.txt")
 
@@ -93,9 +104,19 @@ class NoteManager:
         elif command.lower().startswith('delete'):
             name_to_delete = command.split(' ')[1]
             return note_actions.delete_note(self.notes, name_to_delete)
-        elif command.lower().startswith('get '):
+        # elif command.lower().startswith('get '):
+        #     name_to_get = command.split(' ')[1]
+        #     return self.get_note_by_name(name_to_get)
+        elif command.lower().startswith('get'):
             name_to_get = command.split(' ')[1]
-            return self.get_note_by_name(name_to_get)
+            if name_to_get == 'all':
+                with open(self.data_file_path, "r") as file:
+                    lines = file.readlines()
+                    for line in lines:
+                        name, title = line.strip().split(', ')
+                        print(f"{name}, {title}")
+            else:
+                return self.get_note_by_name(name_to_get)
         else:
             return "Unknown command. Please try again."
 
@@ -104,8 +125,8 @@ def main():
     bot.load_notes_from_file()
 
     print("1. For add new notes use command like that:\n- add 'name', 'title' -\n"
-          "2. For edit thats will be same."
-          "3. But for delete or get use command like that:\n- get 'name' -\n")
+          "2. For edit thats will be same.\n"
+          "3. But for delete or get, use command like that:\n- get 'name' -\n")
 
 
     while True:
